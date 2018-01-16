@@ -7,6 +7,7 @@ public class Vacancy {
     private String title;
     private String url;
     private String address;
+    private String siteName;
 
     public String getCompanyName() {
         return companyName;
@@ -54,6 +55,14 @@ public class Vacancy {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getSiteName() {
+        return siteName;
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
     }
 
     @Override

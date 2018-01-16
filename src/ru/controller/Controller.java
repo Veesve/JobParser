@@ -2,7 +2,6 @@ package ru.controller;
 
 import ru.Vacancy;
 import ru.model.Model;
-import ru.model.Provider;
 import ru.view.ViewType;
 
 import java.util.ArrayList;

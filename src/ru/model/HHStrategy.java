@@ -12,7 +12,7 @@ import java.util.List;
 
 public class HHStrategy implements Strategy {
     private final static String URL_FORMAT =
-            "https://hh.ru/search/vacancy?text=java+%s&enable_snippets=true&clusters=true&area=1&page=%d";
+            "https://hh.ru/search/vacancy?text=%s&enable_snippets=true&clusters=true&area=1&page=%d";
     @Override
     public List<Vacancy> getVacancies(String request) {
         ArrayList<Vacancy> vacancies = new ArrayList<>();
@@ -21,7 +21,6 @@ public class HHStrategy implements Strategy {
             if (document != null) {
                 Elements jobElements = document.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy");
                 if(jobElements.size() > 0) {
-                    System.out.println("");
                     for (Element e : jobElements) {
                         Vacancy vacancy = new Vacancy();
                         vacancy.setCompanyName(getCompanyName(e));
@@ -30,6 +29,7 @@ public class HHStrategy implements Strategy {
                         vacancy.setTitle(getTitle(e));
                         vacancy.setUrl(getUrl(e));
                         vacancy.setAddress(getAddress(e));
+                        vacancy.setSiteName("https://hh.ru");
                         vacancies.add(vacancy);
                     }
                 }
@@ -88,4 +88,5 @@ public class HHStrategy implements Strategy {
             return null;
         }
     }
+
 }
