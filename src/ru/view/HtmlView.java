@@ -64,7 +64,7 @@ public class HtmlView implements ViewType {
                     .attr("href",vacancy.getUrl())
                     .text(vacancy.getTitle());//оборачивание элемента Title в новодобавленный тег a
             newTemplate.getElementsByClass("company_name").first().text(vacancy.getCompanyName());
-            newTemplate.getElementsByClass("creating_date").first().text(vacancy.getCreatingDate());
+            newTemplate.getElementsByClass("creating_date").first().text(vacancy.getCreatingDate().toString());
             newTemplate.getElementsByClass("address").first().text(vacancy.getAddress());
             newTemplate.getElementsByClass("salary").first().text(vacancy.getSalaryCount());
             newTemplate.getElementsByClass("site").first().text(vacancy.getSiteName());

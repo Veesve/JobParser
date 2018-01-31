@@ -7,13 +7,16 @@ import org.jsoup.select.Elements;
 import ru.Vacancy;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MCStrategy implements Strategy {
     private final static String URL_FORMAT =
             "https://moikrug.ru/vacancies?city_id=678&page=%d&q=%s";
-
+    private static DateTimeFormatter myDateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
     @Override
     public List<Vacancy> getVacancies(String request) {
         ArrayList<Vacancy> vacancies = new ArrayList<>();
@@ -86,9 +89,16 @@ public class MCStrategy implements Strategy {
         return "";
     }
 
-    private String getCreatingDate(Element element) {
-        Element creatingDate = element.getElementsByClass("date").first();
-        return creatingDate.text();
+    private LocalDate getCreatingDate(Element element) {
+        String stringDate = element.getElementsByClass("date").first().text();
+        try{
+            return LocalDate.parse(stringDate,myDateFormatter);
+        } catch (DateTimeParseException e)
+        {
+            System.err.println("MCStrategy exception");
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

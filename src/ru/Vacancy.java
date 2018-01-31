@@ -1,9 +1,11 @@
 package ru;
 
+import java.time.LocalDate;
+
 public class Vacancy {
     private String companyName;
     private String salaryCount;
-    private String creatingDate;
+    private LocalDate creatingDate;
     private String title;
     private String url;
     private String address;
@@ -17,7 +19,7 @@ public class Vacancy {
         return salaryCount;
     }
 
-    public String getCreatingDate() {
+    public LocalDate getCreatingDate() {
         return creatingDate;
     }
 
@@ -41,7 +43,7 @@ public class Vacancy {
         this.salaryCount = salaryCount;
     }
 
-    public void setCreatingDate(String creatingDate) {
+    public void setCreatingDate(LocalDate creatingDate) {
         this.creatingDate = creatingDate;
     }
 

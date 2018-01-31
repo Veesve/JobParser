@@ -7,12 +7,19 @@ import org.jsoup.select.Elements;
 import ru.Vacancy;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class HHStrategy implements Strategy {
     private final static String URL_FORMAT =
             "https://hh.ru/search/vacancy?text=%s&enable_snippets=true&clusters=true&area=1&page=%d";
+    private static DateTimeFormatter myDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
     @Override
     public List<Vacancy> getVacancies(String request) {
         ArrayList<Vacancy> vacancies = new ArrayList<>();
@@ -55,9 +62,21 @@ public class HHStrategy implements Strategy {
             return "";
         return salary;
     }
-    private String getCreatingDate(Element element){
-        return element.getElementsByAttributeValue("data-qa","vacancy-serp__vacancy-date")
-                .text();
+    private LocalDate getCreatingDate(Element element){
+
+        String stringDate = element.getElementsByAttributeValue("data-qa","vacancy-serp__vacancy-date")
+                .text() +" 2018";
+        try {
+            LocalDate date = LocalDate.parse(stringDate,myDateFormatter);
+            if(date.getMonth().getValue() > Calendar.MONTH)
+                return date.withYear(2017);
+            return date;
+        } catch (DateTimeParseException e)
+        {
+            System.err.println("HHStrategy exception");
+            e.printStackTrace();
+            return null;
+        }
     }
     private String getTitle(Element element){
         return element

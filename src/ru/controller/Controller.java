@@ -19,8 +19,9 @@ public class Controller {
     public void showResults(){
         view.show(vacancies);
     }
-    public void getVacancies(String request){
+    public List<Vacancy> getVacancies(String request){
         vacancies = model.getJavaVacancies(request);
+        return vacancies;
     }
 
 
