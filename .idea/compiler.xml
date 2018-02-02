@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="JobParser" target="1.5" />
+      <module name="JobParser" target="9" />
       <module name="jobparser" target="9" />
     </bytecodeTargetLevel>
   </component>
