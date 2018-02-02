@@ -1,10 +1,10 @@
-package ru.model;
+package ru.veesve.jobparser.model;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import ru.Vacancy;
+import ru.veesve.jobparser.Vacancy;
 
 import java.io.IOException;
 import java.time.LocalDate;

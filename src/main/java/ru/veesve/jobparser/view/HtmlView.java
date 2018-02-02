@@ -1,9 +1,9 @@
-package ru.view;
+package ru.veesve.jobparser.view;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import ru.Vacancy;
+import ru.veesve.jobparser.Vacancy;
 
 import java.awt.*;
 import java.io.File;

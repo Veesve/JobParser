@@ -1,6 +1,6 @@
-package ru.view;
+package ru.veesve.jobparser.view;
 
-import ru.Vacancy;
+import ru.veesve.jobparser.Vacancy;
 
 import java.util.List;
 
