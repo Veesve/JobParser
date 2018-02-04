@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,6 +37,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class GUIView extends Application implements ViewType {
 
@@ -44,7 +46,7 @@ public class GUIView extends Application implements ViewType {
 
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
         Scene scene = new Scene(new Group());
 
         primaryStage.setScene(scene);
@@ -66,7 +68,7 @@ public class GUIView extends Application implements ViewType {
 
         //Label Section
         final Label titleLabel = new Label("Job Aggregator");
-        titleLabel.setFont(new Font("Arial",20));
+        titleLabel.setFont(new Font("Arial", 20));
 
         //Table Section
         final TableView<Vacancy> table = new TableView<>();
@@ -94,7 +96,7 @@ public class GUIView extends Application implements ViewType {
         );
 
 
-        TableColumn<Vacancy,Hyperlink> titleCol =
+        TableColumn<Vacancy, Hyperlink> titleCol =
                 new TableColumn<>("Title");
         titleCol.setMinWidth(170);
 
@@ -122,9 +124,8 @@ public class GUIView extends Application implements ViewType {
         titleCol.setCellFactory(new HyperlinkCell());
 
 
-
-                TableColumn < Vacancy, String > addressCol =
-                        new TableColumn<>("Address");
+        TableColumn<Vacancy, String> addressCol =
+                new TableColumn<>("Address");
         addressCol.setMinWidth(110);
         addressCol.setCellValueFactory(
                 new PropertyValueFactory<>("address")
@@ -138,16 +139,25 @@ public class GUIView extends Application implements ViewType {
         );
 
         table.setItems(vacancyList);
-        table.getColumns().addAll(companyNameCol,titleCol,salaryCountCol,addressCol,creatingDateCol,siteNameCol);
+        table.getColumns().addAll(companyNameCol, titleCol, salaryCountCol, addressCol, creatingDateCol, siteNameCol);
 
         //ButtonSection
         final Button searchButton = new Button("Job Search");
-        searchButton.setOnAction((ActionEvent e)->{
-            Model model = new Model();
-            model.setStrategy(new HHStrategy(),new MCStrategy());
-            Controller controller = new Controller(model,this);
-            vacancyList.removeAll(vacancyList);
-            vacancyList.addAll(controller.getVacancies(searchField.getText()));
+        searchButton.setOnAction((ActionEvent e) -> {
+            GUIView currentView = this;
+
+            Task findJobs = new Task<Void>() {
+                @Override
+                public Void call() {
+                    Model model = new Model();
+                    model.setStrategy(new HHStrategy(), new MCStrategy());
+                    Controller controller = new Controller(model, currentView);
+                    vacancyList.removeAll(vacancyList);
+                    vacancyList.addAll(controller.getVacancies(searchField.getText()));
+                    return null;
+                }
+            };
+            new Thread(findJobs).start();
         });
 
         //Box Section
@@ -157,9 +167,9 @@ public class GUIView extends Application implements ViewType {
 
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10,0,0,10));
-        vbox.getChildren().addAll(titleLabel,table,hb);
-        ((Group)scene.getRoot()).getChildren().addAll(vbox);
+        vbox.setPadding(new Insets(10, 0, 0, 10));
+        vbox.getChildren().addAll(titleLabel, table, hb);
+        ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
 
         //showing the scene
@@ -174,7 +184,7 @@ public class GUIView extends Application implements ViewType {
         GUIView.launch(GUIView.class);
     }
 
-    public class HyperlinkCell implements  Callback<TableColumn<Vacancy, Hyperlink>, TableCell<Vacancy, Hyperlink>> {
+    public class HyperlinkCell implements Callback<TableColumn<Vacancy, Hyperlink>, TableCell<Vacancy, Hyperlink>> {
         @Override
         public TableCell<Vacancy, Hyperlink> call(TableColumn<Vacancy, Hyperlink> arg) {
             TableCell<Vacancy, Hyperlink> cell = new TableCell<Vacancy, Hyperlink>() {
