@@ -2,6 +2,7 @@ package ru.veesve.jobparser.view;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -142,7 +143,18 @@ public class GUIView extends Application implements ViewType {
         table.getColumns().addAll(companyNameCol, titleCol, salaryCountCol, addressCol, creatingDateCol, siteNameCol);
 
         //ButtonSection
-        final Button searchButton = new Button("Job Search");
+        Button searchButton = new Button("Job Search");
+        BooleanBinding searchButtonEmptyCheck = new BooleanBinding() {
+            {
+                super.bind(searchField.textProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return searchField.getText().isEmpty();
+            }
+        };
+        searchButton.disableProperty().bind(searchButtonEmptyCheck);
         searchButton.setOnAction((ActionEvent e) -> {
             GUIView currentView = this;
 
