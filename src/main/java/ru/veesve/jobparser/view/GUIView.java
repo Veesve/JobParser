@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -37,6 +38,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -48,13 +50,8 @@ public class GUIView extends Application implements ViewType {
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(new Group());
-
-        primaryStage.setScene(scene);
         primaryStage.setTitle("Job Aggregator");
-        primaryStage.setWidth(810);
-        primaryStage.setHeight(520);
-        primaryStage.resizableProperty().setValue(false);
+
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
@@ -73,6 +70,7 @@ public class GUIView extends Application implements ViewType {
 
         //Table Section
         final TableView<Vacancy> table = new TableView<>();
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Vacancy, String> companyNameCol =
                 new TableColumn<>("Company Name");
@@ -88,6 +86,7 @@ public class GUIView extends Application implements ViewType {
         salaryCountCol.setCellValueFactory(
                 new PropertyValueFactory<>("salaryCount")
         );
+        salaryCountCol.setComparator(new SalaryComparatator());
 
         TableColumn<Vacancy, LocalDate> creatingDateCol =
                 new TableColumn<>("Creating Date");
@@ -174,14 +173,20 @@ public class GUIView extends Application implements ViewType {
 
         //Box Section
         final HBox hb = new HBox();
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+        HBox.setHgrow(searchButton, Priority.ALWAYS);
+        hb.setPadding(new Insets(5, 10, 5, 0));
         hb.getChildren().addAll(searchField, searchButton);
         hb.setSpacing(3);
 
         final VBox vbox = new VBox();
+        VBox.setVgrow(table, Priority.ALWAYS);
         vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
+        vbox.setPadding(new Insets(10, 0, 5, 10));
         vbox.getChildren().addAll(titleLabel, table, hb);
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+        Scene scene = new Scene(vbox);
+        vbox.setVgrow(table, Priority.ALWAYS);
+        //((Group) scene.getRoot()).getChildren().addAll(vbox);
 
 
         //showing the scene
@@ -207,6 +212,47 @@ public class GUIView extends Application implements ViewType {
             };
             return cell;
         }
+    }
+    private class SalaryComparatator implements Comparator<String>{
+        @Override
+        public int compare(String o1, String o2) {
+            if(o1.isEmpty() && o2.isEmpty())
+                return 0;
+            else if(o1.isEmpty())
+                return -1;
+            else if(o2.isEmpty())
+                return 1;
+            List<Integer> range1 = parseString(o1); //extracted values from first object
+            List<Integer> range2 = parseString(o2); //extracted values from second object
+            if(range1.get(0)<range2.get(0))
+                return -1;
+            else if(range1.get(0)>range2.get(0))
+                return 1;
+            if(range1.size()>1 && range2.size()>1)
+                if(range1.get(1) < range2.get(1))
+                    return -1;
+                else if(range1.get(1) > range2.get(1))
+                    return 1;
+            return 0;
+        }
+    }
+
+    //Method for extracting salaries count from String
+    private static List<Integer> parseString(String parseObject) {
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean found = false;
+        List<Integer> range = new ArrayList<>();
+        for (char c : parseObject.toCharArray()) {
+            if (Character.isDigit(c)) {
+                stringBuilder.append(c);
+                found = true;
+            } else if (found && c != 32) {
+                range.add(Integer.parseInt(stringBuilder.toString()));
+                stringBuilder.setLength(0);
+                found = false;
+            }
+        }
+        return range;
     }
 
 }
